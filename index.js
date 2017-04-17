@@ -3,7 +3,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 app.get('/', function(req, res) {
-    res.sendFile('/home/mkrupin/dev/nodejs/html/doc.html');
+    res.sendFile('html/doc.html');
 });
 
 io.on('connection', function(socket) {
@@ -13,7 +13,7 @@ io.on('connection', function(socket) {
 
         console.log('sample');
         var spawn = require('child_process').spawn;
-        var spawn_data = ['/home/mkrupin/dev/nodejs/sample.py', op, msg];
+        var spawn_data = ['sample.py', op, msg];
         var py = spawn('python3', spawn_data);
 
         var child_status = '1';

@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 import sys, json, time, datetime
 import mysql.connector as mariadb
@@ -7,23 +7,33 @@ import mysql.connector as mariadb
 #   Database Handler
 #
 
-
 def connect():
-    conn = mariadb.connect(user='root', password='', database='SimpleDoc')
-    return conn.cursor()
-
+    try:
+        conn = mariadb.connect(user='root', password='', database='SimpleDoc')
+        return conn.cursor()
+    except Error as e:
+        log(e)
 
 def quick_fetch(query, data):
-    conn = connect()
-    conn.execute(query, data)
-    result = conn.fetchall()
-    conn.close()
-    return result
+
+    try:
+        conn = connect()
+        conn.execute(query, data)
+        result = conn.fetchall()
+    except Error as e:
+        log(e)
+    finally:
+        conn.close()
+        return result
 
 def quick_nofetch(query, data):
-    conn = connect()
-    conn.execute(query, data)
-    conn.close()
+    try:
+        conn = connect()
+        conn.execute(query, data)
+    except Error as e:
+        log(e)
+    finally:
+        conn.close()
 
 #
 #   CRUD Handlers
@@ -45,7 +55,7 @@ def create(data):
     quick_nofetch(query, arr)
 
 def create_file(path, data):
-    with open('/home/mkrupin/dev/nodejs/' + str(path),'w') as fh:
+    with open(str(path),'w') as fh:
         fh.write(data)
 
 def read(data):
@@ -53,7 +63,7 @@ def read(data):
     query = "
         SELECT title, doc_path
         FROM doc_data
-        WHERE id = ?
+        WHERE id = %s
     "
 
     result = quick_fetch(query, data)
@@ -86,15 +96,21 @@ def update_file(path):
 def delete(data):
     return
 
+#
+#   Log
+#
+
 def log(msg):
-    with open('/home/mkrupin/dev/nodejs/python.log','a') as fh:
+    with open('python.log','a') as fh:
         fh.write(datetime.
                  datetime.
                  fromtimestamp(time.time()).
                  strftime('%Y-%m-%d %H:%M:%S'))
-        fh.write(msg)
-        fh.write('\n')
+        fh.write(' ' + msg + '\n')
 
+#
+#   Application
+#
 
 try:
     lines = sys.argv
@@ -110,9 +126,9 @@ try:
 
     result = operations[op](data)
 
-    print(result)
+    print result
 except:
-    print('py_error')
+    print 'py_error'
 
 sys.stdout.flush()
 
