@@ -1,9 +1,11 @@
 {
-  "name": "socket-chat-example",
+  "name": "simple-doc",
   "version": "0.0.1",
-  "description": "my first socket.io app",
+  "description": "a simple self-hosted google doc style application",
   "dependencies": {
+    "child_process": "^1.0.2",
     "express": "^4.15.2",
+    "jquery": "^3.2.1",
     "socket.io": "^1.7.3"
   }
 }

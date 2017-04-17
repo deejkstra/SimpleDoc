@@ -1,0 +1,70 @@
+<html>
+<head>
+    <title>Socket.IO Simple Doc</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font: 13px Helvetica, Arial; }
+        form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+        form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+        form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+        .hidden { visibility: hidden; }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  </head>
+  <body>
+
+    <div id="CreateDoc" class="hidden">
+
+        Title: <input id="title" type="text"><br>
+        <input type="submit" value="New">
+
+    </div>
+    <div id="SimpleDoc">
+
+        Title: <input id="title" type="text"><br>
+        <textarea id="doc" rows="4" cols="50"/></textarea><br>
+        <div id="status">saved</div>
+
+    </div>
+    <div id="ListDoc" class="hidden">
+
+        <ul id="list"></ul>
+
+    </div>
+
+  </body>
+  <script>
+    var socket = io();
+
+    var delay = (function(){
+        var timer = 0;
+        return function(callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
+    $('#doc').keyup(function() {
+        $('#status').html('unsaved changes');
+        delay(function() {
+            socket.emit('update', $('#doc').val());
+            socket.emit('save', $('#doc').val());
+        },1000);
+    });
+
+    socket.on('update', function(msg) {
+        $('#doc').val(msg);
+    });
+
+    socket.on('save', function(msg) {
+        $('#status').html('saved');
+    });
+
+    /*
+    socket.on('python', function(msg) {
+        $("#list").append('<li>' + msg + '</li>');
+    });
+    */
+  </script>
+</html>
